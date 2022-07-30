@@ -1,6 +1,18 @@
 import React from 'react'
+import * as booksAPI from "./BooksAPI";
 
 export default function Book(props) {
+
+    const selectHandler = (e) => {
+        booksAPI.update(props.book, e.target.value);
+        const newBooks = props.books.map(book => {
+            if (props.book.id === book.id){
+                return {...book, shelf: e.target.value}
+            }
+            return book;
+        });
+        props.updateState(newBooks);
+    }
     
     return (
         <div className="book">
@@ -14,7 +26,7 @@ export default function Book(props) {
                     }}
                 ></div>
                 <div className="book-shelf-changer">
-                    <select defaultValue={props.book.shelf}>
+                    <select defaultValue={props.book.shelf} onChange={selectHandler}>
                         <option value="none" disabled>
                             Move to...
                         </option>

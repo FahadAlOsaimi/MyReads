@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 
 export default function SearchPage() {
+
     return (
         <div className="search-books">
             <div className="search-books-bar">
@@ -14,7 +15,8 @@ export default function SearchPage() {
                 </div>
             </div>
             <div className="search-books-results">
-                <ol className="books-grid"></ol>
+                <ol className="books-grid">
+                </ol>
             </div>
         </div>
     )

@@ -1,9 +1,22 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import Bookshelf from './Bookshelf';
+import { useEffect, useState } from "react";
+import * as booksAPI from "./BooksAPI";
 
-export default function BooksPage(props) {
-  
+export default function BooksPage() {
+  const [books, setBooks] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await booksAPI.getAll();
+      const search = await booksAPI.search("React", 20);
+      setBooks(data);
+      console.log(search);
+    }
+    fetchData();
+  }, []); // [] now useEffect will only be run when a component mounts, but not when it get updated (avoid loop)
+
   return (
     <div className="list-books">
       <div className="list-books-title">
@@ -11,9 +24,9 @@ export default function BooksPage(props) {
       </div>
       <div className="list-books-content">
         <div>
-          <Bookshelf shelfName="Currently Reading" books={props.books.filter(book => book.shelf === 'currentlyReading')} />
-          <Bookshelf shelfName="Want to Read" books={props.books.filter(book => book.shelf === 'wantToRead')} />
-          <Bookshelf shelfName="Read" books={props.books.filter(book => book.shelf === 'read')} />
+          <Bookshelf shelfName="Currently Reading" shelfValue="currentlyReading" books={ books } updateState={setBooks} />
+          <Bookshelf shelfName="Want to Read" shelfValue="wantToRead" books={ books } updateState={setBooks}/>
+          <Bookshelf shelfName="Read" shelfValue="read" books={ books } updateState={setBooks}/>
         </div>
       </div>
       <div className="open-search">
