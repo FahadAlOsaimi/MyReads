@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from "react-router-dom";
 import Bookshelf from './Bookshelf';
 import { useEffect, useState } from "react";
-import * as booksAPI from "./BooksAPI";
+import * as booksAPI from "../BooksAPI";
 
 export default function BooksPage() {
   const [books, setBooks] = useState([]);
@@ -10,9 +10,7 @@ export default function BooksPage() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await booksAPI.getAll();
-      const search = await booksAPI.search("React", 20);
       setBooks(data);
-      console.log(search);
     }
     fetchData();
   }, []); // [] now useEffect will only be run when a component mounts, but not when it get updated (avoid loop)
