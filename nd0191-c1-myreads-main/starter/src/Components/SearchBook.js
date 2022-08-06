@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import * as booksAPI from "../BooksAPI";
 
 export default function Book(props) {
-
+    // eslint-disable-next-line
     const [shelf, setShelf] = useState("none");
 
     const searchHandler = (e) => {
@@ -18,7 +18,7 @@ export default function Book(props) {
                     style={{
                         width: 128,
                         height: 193,
-                        backgroundImage: `url(${props.book.imageLinks.thumbnail})`
+                        backgroundImage: props.book.imageLinks? `url(${props.book.imageLinks.thumbnail})`: null
                     }}
                 ></div>
                 <div className="book-shelf-changer">
@@ -36,7 +36,7 @@ export default function Book(props) {
                 </div>
             </div>
             <div className="book-title">{props.book.title}</div>
-            <div className="book-authors">{props.book.authors[0]}</div>
+            <div className="book-authors">{props.book.authors.join(', ')}</div>
         </div>
     )
 }

@@ -3,28 +3,37 @@ import { Link } from "react-router-dom";
 import * as booksAPI from "../BooksAPI";
 import SearchBook from './SearchBook'
 
-export default function SearchPage() {
+export default function SearchPage(props) {
 
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState([]);
+    const [showErrorMsg, setShowErrorMsg] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             if (searchTerm !== "") {
                 const data = await booksAPI.search(searchTerm, 20);
-
-                const newData = data.map(async (book) => {
-                    const updateShelf = await booksAPI.get(book.id);
-                    return {...book, shelf: updateShelf.shelf}
-                });
-                const finalResult = await Promise.all(newData);
-                setSearchResults(finalResult);
+                if (!data.error) {
+                    const newData = data.map(async (book) => {
+                        const updateShelf = await booksAPI.get(book.id);
+                        if (updateShelf.authors === undefined) {
+                            return { ...book, shelf: updateShelf.shelf, authors: ["No authors found."] }
+                        }
+                        return { ...book, shelf: updateShelf.shelf }
+                    });
+                    const finalResult = await Promise.all(newData);
+                    setSearchResults(finalResult);
+                    setShowErrorMsg(false);
+                } else {
+                    setSearchResults([]);
+                    setShowErrorMsg(true);
+                }
             } else {
                 setSearchResults([]);
             }
         }
         fetchData();
-    }, [searchTerm]);
+    }, [searchTerm, props.shelfValues]);
 
     return (
         <div className="search-books">
@@ -40,11 +49,14 @@ export default function SearchPage() {
             </div>
             <div className="search-books-results">
                 <ol className="books-grid">
-                    {
-                        searchResults ?
+                    {  
+                        searchResults &&
                             searchResults.map((book, index) => {
                                 return <li key={index}> <SearchBook book={book} /> </li>
-                            }) : null
+                            })
+                    }
+                    {
+                        showErrorMsg && <h2>Sorry, nothing is found.</h2>
                     }
                 </ol>
             </div>
